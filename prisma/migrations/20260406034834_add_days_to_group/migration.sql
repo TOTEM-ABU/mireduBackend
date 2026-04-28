@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "GROUP" ADD COLUMN "days" TEXT DEFAULT '';
