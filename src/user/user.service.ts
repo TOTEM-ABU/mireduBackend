@@ -190,7 +190,6 @@ export class UserService {
     const hashedOtp = await bcrypt.hash(otp, 10);
     const otpExpires = new Date(Date.now() + 2 * 60 * 1000);
 
-    // Build prisma data — exclude avatar if not provided
     const studentData: any = {
       firstName: data.firstName,
       lastName: data.lastName,
@@ -200,8 +199,8 @@ export class UserService {
       parentsPhoneNumber: data.parentsPhoneNumber,
       otpCode: hashedOtp,
       otpExpires: otpExpires,
+      avatar: data.avatar || "",
     };
-    if (data.avatar) studentData.avatar = data.avatar;
 
     let newUser: any;
     try {
@@ -245,7 +244,6 @@ export class UserService {
     const hashedOtp = await bcrypt.hash(otp, 10);
     const otpExpires = new Date(Date.now() + 2 * 60 * 1000);
 
-    // Build prisma data — exclude avatar if not provided
     const teacherData: any = {
       name: data.name,
       email: data.email,
@@ -253,8 +251,8 @@ export class UserService {
       phoneNumber: data.phoneNumber,
       otpCode: hashedOtp,
       otpExpires: otpExpires,
+      avatar: data.avatar || "",
     };
-    if (data.avatar) teacherData.avatar = data.avatar;
 
     let newUser: any;
     try {
@@ -296,15 +294,14 @@ export class UserService {
     const hashedOtp = await bcrypt.hash(otp, 10);
     const otpExpires = new Date(Date.now() + 2 * 60 * 1000);
 
-    // Build prisma data — exclude avatar if not provided
     const adminData: any = {
       name: data.name,
       email: data.email,
       password: hash,
       otpCode: hashedOtp,
       otpExpires: otpExpires,
+      avatar: data.avatar || "",
     };
-    if (data.avatar) adminData.avatar = data.avatar;
 
     let newUser: any;
     try {
