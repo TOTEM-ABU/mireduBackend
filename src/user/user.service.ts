@@ -188,7 +188,7 @@ export class UserService {
     const hash = bcrypt.hashSync(data.password, 10);
     const otp = this.generateOTP();
     const hashedOtp = await bcrypt.hash(otp, 10);
-    const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
+    const otpExpires = new Date(Date.now() + 2 * 60 * 1000);
 
     // Build prisma data — exclude avatar if not provided
     const studentData: any = {
@@ -218,7 +218,7 @@ export class UserService {
       await this.mailer.sendMail(
         data.email,
         'Your OTP Code',
-        `Your OTP code is: ${otp}\n\nIt will expire in 5 minutes.`,
+        `Your OTP code is: ${otp}\n\nIt will expire in 2 minutes.`,
       );
     } catch (mailError) {
       console.warn(
@@ -243,7 +243,7 @@ export class UserService {
     const hash = bcrypt.hashSync(data.password, 10);
     const otp = this.generateOTP();
     const hashedOtp = await bcrypt.hash(otp, 10);
-    const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
+    const otpExpires = new Date(Date.now() + 2 * 60 * 1000);
 
     // Build prisma data — exclude avatar if not provided
     const teacherData: any = {
@@ -270,7 +270,7 @@ export class UserService {
       await this.mailer.sendMail(
         data.email,
         'Your OTP Code',
-        `Your OTP code is: ${otp}\n\nIt will expire in 5 minutes.`,
+        `Your OTP code is: ${otp}\n\nIt will expire in 2 minutes.`,
       );
     } catch (mailError) {
       console.warn(
@@ -294,7 +294,7 @@ export class UserService {
     const hash = bcrypt.hashSync(data.password, 10);
     const otp = this.generateOTP();
     const hashedOtp = await bcrypt.hash(otp, 10);
-    const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
+    const otpExpires = new Date(Date.now() + 2 * 60 * 1000);
 
     // Build prisma data — exclude avatar if not provided
     const adminData: any = {
@@ -320,7 +320,7 @@ export class UserService {
       await this.mailer.sendMail(
         data.email,
         'Your OTP Code',
-        `Your OTP code is: ${otp}\n\nIt will expire in 5 minutes.`,
+        `Your OTP code is: ${otp}\n\nIt will expire in 2 minutes.`,
       );
     } catch (mailError) {
       console.warn(
@@ -435,7 +435,7 @@ export class UserService {
       const otp = this.generateOTP();
       console.log(`[resendOtp ${email}] GENERATED NEW OTP:`, otp);
       const hashedOtp = await bcrypt.hash(otp, 10);
-      const otpExpires = new Date(Date.now() + 5 * 60 * 1000);
+      const otpExpires = new Date(Date.now() + 2 * 60 * 1000);
 
       // Save new OTP
       await (this.prisma[userType] as any).update({
@@ -448,7 +448,7 @@ export class UserService {
         await this.mailer.sendMail(
           data.email,
           'Your New OTP Code',
-          `Your new OTP code is: ${otp}\n\nIt will expire in 5 minutes.`,
+          `Your new OTP code is: ${otp}\n\nIt will expire in 2 minutes.`,
         );
       } catch (mailError) {
         console.warn(
