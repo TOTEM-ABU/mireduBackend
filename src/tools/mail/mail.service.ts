@@ -1,35 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import * as Mail from 'nodemailer/lib/mailer';
 
 @Injectable()
 class MailService {
   private transporter: Mail;
+  private readonly logger = new Logger(MailService.name);
 
   constructor() {
+    const user = process.env.MAIL_USER;
+    const pass = process.env.MAIL_PASS;
+
+    this.logger.log(`Mail config: user=${user}, pass=${pass ? '***SET***' : '***MISSING***'}`);
+
     this.transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.MAIL_USER,
-        pass: process.env.MAIL_PASS,
-      },
-      connectionTimeout: 10000, // 10s to connect
-      greetingTimeout: 10000, // 10s for greeting
-      socketTimeout: 15000, // 15s for socket idle
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true, // SSL
+      auth: { user, pass },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
+    });
+
+    // Verify connection on startup (non-blocking)
+    this.transporter.verify().then(() => {
+      this.logger.log('✅ SMTP connection verified successfully');
+    }).catch((err) => {
+      this.logger.error('❌ SMTP connection verification failed:', err.message);
     });
   }
 
   async sendMail(to: string, subject: string, text: string) {
+    const from = `"MirEdu" <${process.env.MAIL_USER}>`;
+    this.logger.log(`Sending email to: ${to}, subject: ${subject}`);
     try {
-      await this.transporter.sendMail({
-        to,
-        subject,
-        text,
-      });
+      await this.transporter.sendMail({ from, to, subject, text });
+      this.logger.log(`✅ Email sent successfully to ${to}`);
       return 'Success!';
     } catch (error) {
-      console.warn('[MailService] sendMail failed:', error?.message);
-      throw error; // re-throw so caller's catch can handle it
+      this.logger.error(`❌ Failed to send email to ${to}: ${error.message}`);
+      throw error;
     }
   }
 }
