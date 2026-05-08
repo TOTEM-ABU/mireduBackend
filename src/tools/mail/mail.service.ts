@@ -1,28 +1,32 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 @Injectable()
 class MailService {
-  private transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
-    },
-  });
-
+  private resend: Resend;
   private readonly logger = new Logger(MailService.name);
+
+  constructor() {
+    this.resend = new Resend(process.env.RESEND_API_KEY);
+    this.logger.log('MailService initialized with Resend');
+  }
 
   async sendMail(to: string, subject: string, text: string) {
     this.logger.log(`Sending email to: ${to}`);
     try {
-      await this.transporter.sendMail({
-        from: `"MirEdu" <${process.env.MAIL_USER}>`,
-        to,
+      const { data, error } = await this.resend.emails.send({
+        from: 'MirEdu <onboarding@resend.dev>',
+        to: [to],
         subject,
         text,
       });
-      this.logger.log(`✅ Email sent to ${to}`);
+
+      if (error) {
+        this.logger.error(`❌ Resend error: ${JSON.stringify(error)}`);
+        throw new Error(error.message);
+      }
+
+      this.logger.log(`✅ Email sent to ${to}, id: ${data?.id}`);
       return 'Success!';
     } catch (error) {
       this.logger.error(`❌ Failed to send email to ${to}: ${error.message}`);
@@ -32,4 +36,3 @@ class MailService {
 }
 
 export default MailService;
-
